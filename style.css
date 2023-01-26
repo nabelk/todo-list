@@ -25,6 +25,11 @@ main div.sidebar {
     background-color: pink;
 }
 
+main div.project-list {
+    display: flex;
+    flex-direction: column;
+}
+
 main div.content {
     background-color: aquamarine;
 }
