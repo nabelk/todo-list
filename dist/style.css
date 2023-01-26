@@ -1,0 +1,30 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+}
+
+header {
+    background-color: brown;
+    text-align: center;
+    padding: 20px;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 20vw calc(100vw - 20vw);
+}
+
+main div.sidebar {
+    background-color: pink;
+}
+
+main div.content {
+    background-color: aquamarine;
+}
