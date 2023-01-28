@@ -6,10 +6,18 @@ export default function Project() {
         return { name, tasklist: [] };
     }
 
+    const delProject = (index) => {
+        projectList.splice(index, 1);
+    };
+
     const addTodo = (name, task) => {
         const index = projectList.findIndex((list) => list.name === name);
         projectList[index].tasklist.push(task);
     };
 
-    return { projectList, Addproject, addTodo };
+    const delTodo = (index, taskIndex) => {
+        projectList[index].tasklist.splice(taskIndex, 1);
+    };
+
+    return { projectList, Addproject, delProject, addTodo, delTodo };
 }
