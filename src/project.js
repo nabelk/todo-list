@@ -21,7 +21,6 @@ export default function Project() {
         priority,
         checked
     ) => {
-        // const index = getIndexProject(projectName);
         projectList[projectIndex].tasklist.push({
             title,
             details,
@@ -31,9 +30,8 @@ export default function Project() {
         });
     };
 
-    const getToDoDetails = (project, taskIndex) => {
-        const index = getIndexProject(project);
-        console.log(projectList[index].tasklist[taskIndex]);
+    const checkedTask = (projectIndex, taskIndex, boolean) => {
+        projectList[projectIndex].tasklist[taskIndex].checked = boolean;
     };
 
     const delTodo = (index, taskIndex) => {
@@ -45,7 +43,7 @@ export default function Project() {
         Addproject,
         delProject,
         addTodo,
-        getToDoDetails,
+        checkedTask,
         delTodo,
     };
 }
