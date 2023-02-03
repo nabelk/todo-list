@@ -30,6 +30,23 @@ export default function Project() {
         });
     };
 
+    const editToDo = (
+        projectIndex,
+        taskIndex,
+        title,
+        details,
+        dueDate,
+        priority
+    ) => {
+        const taskObj = projectList[projectIndex].tasklist[taskIndex];
+        console.table(taskObj);
+        taskObj.title = title;
+        taskObj.details = details;
+        taskObj.dueDate = dueDate;
+        taskObj.priority = priority;
+        console.table(taskObj);
+    };
+
     const checkedTask = (projectIndex, taskIndex, boolean) => {
         projectList[projectIndex].tasklist[taskIndex].checked = boolean;
     };
@@ -43,6 +60,7 @@ export default function Project() {
         Addproject,
         delProject,
         addTodo,
+        editToDo,
         checkedTask,
         delTodo,
     };
