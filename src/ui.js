@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import _, { assign } from 'lodash';
 import { format } from 'date-fns';
+import { el } from 'date-fns/locale';
 import Project from './project';
 
 export default function Screen() {
@@ -52,16 +53,17 @@ export default function Screen() {
             const task = document.createElement('div');
             const infoBtn = document.createElement('button');
             const delBtn = document.createElement('button');
+            const editBtn = document.createElement('button');
             let datedetail = item.dueDate;
             if (datedetail !== '') {
                 datedetail = format(new Date(datedetail), 'd MMMM yyyy');
             }
-            if (item.priority === 'low') {
-                div.style.borderLeft = 'solid 2px green';
-            } else if (item.priority === 'medium') {
-                div.style.borderLeft = 'solid 2px yellow';
-            } else if (item.priority === 'high') {
-                div.style.borderLeft = 'solid 2px red';
+            if (item.priority === 'Low') {
+                div.style.borderLeft = 'solid 3px green';
+            } else if (item.priority === 'Medium') {
+                div.style.borderLeft = 'solid 3px yellow';
+            } else if (item.priority === 'High') {
+                div.style.borderLeft = 'solid 3px red';
             }
             contentList.appendChild(Object.assign(div)).append(
                 Object.assign(task, {
@@ -73,12 +75,16 @@ export default function Screen() {
                     textContent: 'Details',
                     className: 'info-btn',
                 }),
+                Object.assign(editBtn, {
+                    textContent: 'Edit',
+                    className: 'edit-task-btn',
+                }),
                 Object.assign(delBtn, {
                     textContent: '✖',
                     className: 'delete-todo',
                 }),
                 Object.assign(document.createElement('div'), {
-                    textContent: `Details: ${item.details}\r\nPriority: ${item.priority}\r\nDue Date: ${datedetail}\r\n`,
+                    textContent: `Project: ${dataName}\r\nDetails: ${item.details}\r\nPriority: ${item.priority}\r\nDue Date: ${datedetail}\r\n`,
                     style: 'display:none',
                 })
             );
@@ -88,6 +94,9 @@ export default function Screen() {
             task.addEventListener('click', checkedTask);
             task.setAttribute('project-index', dataIndex);
             task.setAttribute('data-index', indexNum);
+            editBtn.setAttribute('project-index', dataIndex);
+            editBtn.setAttribute('data-index', indexNum);
+            editBtn.addEventListener('click', editTask);
             infoBtn.addEventListener('click', showDetails);
             delBtn.setAttribute('data-index', indexNum);
             delBtn.addEventListener('click', delToDoEvent);
@@ -97,7 +106,8 @@ export default function Screen() {
                 textContent: dataName,
             }),
             Object.assign(button, {
-                textContent: '➕',
+                textContent: '➕ Task',
+                className: 'add-task-btn',
             }),
             contentList,
             Object.assign(document.createElement('div'), {
@@ -206,6 +216,7 @@ export default function Screen() {
         });
 
         form.addEventListener('submit', (event) => {
+            event.preventDefault();
             project.Addproject(event.target.project.value);
             const newProjectIndex = projectList.findIndex(
                 (element) => element === projectList[projectList.length - 1]
@@ -220,74 +231,156 @@ export default function Screen() {
 
     function addTodoProj(e) {
         e.target.disabled = true;
-        const projectElement = document.querySelector('.content h1');
+        const projectIndex = document
+            .querySelector('.content h1')
+            .getAttribute('data-index');
+        const projectBtn = document.querySelector(
+            `[data-project-index="${projectIndex}"]`
+        );
         const formDiv = document.querySelector('div.form');
-        const cancelButton = document.createElement('button');
-        formDiv
-            .appendChild(Object.assign(document.createElement('form')))
-            .append(
-                Object.assign(document.createElement('input'), {
-                    type: 'text',
-                    name: 'title',
-                    placeholder: 'Title',
-                }),
-                Object.assign(document.createElement('input'), {
-                    type: 'text',
-                    name: 'details',
-                    placeholder: 'Details',
-                }),
-                Object.assign(document.createElement('input'), {
-                    type: 'text',
-                    name: 'priority',
-                    placeholder: 'Priority',
-                }),
-                Object.assign(document.createElement('input'), {
-                    type: 'date',
-                    name: 'date',
-                    min: format(new Date(), 'yyyy-MM-dd'),
-                }),
-                Object.assign(document.createElement('input'), {
-                    type: 'submit',
-                    value: 'Add Task',
-                }),
-                Object.assign(cancelButton, {
-                    textContent: 'Cancel',
-                })
-            );
+        const { form, cancelBtn } = renderForm('Add task');
+        formDiv.appendChild(form);
         formDiv.style.display = '';
-
-        cancelButton.addEventListener('click', () => {
-            cancelButton.parentElement.remove();
-            formDiv.style.display = 'none';
-            e.target.disabled = false;
+        cancelBtn.addEventListener('click', () => {
+            projectBtn.click();
         });
 
-        const form = document.querySelector('form');
         form.addEventListener('submit', (event) => {
             event.preventDefault();
             project.addTodo(
-                Number(projectElement.getAttribute('data-index')),
+                Number(projectIndex),
                 event.target.title.value,
                 event.target.details.value,
                 event.target.date.value,
                 event.target.priority.value,
                 false
             );
-            renderProjectUI();
-            document
-                .querySelector(
-                    `[data-project-index="${projectElement.getAttribute(
-                        'data-index'
-                    )}"]`
-                )
-                .click();
-            formDiv.style.display = 'none';
-            form.remove();
-            console.table('projects: ', projectElement.textContent);
-            console.table(
-                projectList[Number(projectElement.getAttribute('data-index'))]
-                    .tasklist
+            projectBtn.click();
+            console.table('projects: ', projectList[projectIndex].name);
+            console.table(projectList[projectIndex].tasklist);
+        });
+    }
+
+    function renderForm(type, projectIndex, taskIndex) {
+        const titleValue =
+            type === 'rename'
+                ? projectList[projectIndex].tasklist[taskIndex].title
+                : '';
+        const detailsValue =
+            type === 'rename'
+                ? projectList[projectIndex].tasklist[taskIndex].details
+                : '';
+        const dateValue =
+            type === 'rename'
+                ? projectList[projectIndex].tasklist[taskIndex].dueDate
+                : '';
+        const submitValue = type === 'rename' ? 'Confirm Changes' : 'Add Task';
+        const form = document.createElement('form');
+        const cancelBtn = document.createElement('button');
+        const radioDiv = Object.assign(document.createElement('div'), {
+            className: 'input-radio',
+            style: 'display:flex; gap: 10px',
+            textContent: 'Priority:',
+        });
+        radioDiv.append(
+            Object.assign(document.createElement('input'), {
+                type: 'radio',
+                name: 'priority',
+                id: 'low',
+                value: 'Low',
+                style: 'accent-color: green',
+            }),
+            Object.assign(document.createElement('label'), {
+                for: 'low',
+                textContent: 'Low',
+            }),
+            Object.assign(document.createElement('input'), {
+                type: 'radio',
+                name: 'priority',
+                id: 'medium',
+                value: 'Medium',
+                style: 'accent-color: yellow;',
+            }),
+            Object.assign(document.createElement('label'), {
+                for: 'medium',
+                textContent: 'Medium',
+            }),
+            Object.assign(document.createElement('input'), {
+                type: 'radio',
+                name: 'priority',
+                id: 'high',
+                value: 'High',
+                style: 'accent-color: red',
+            }),
+            Object.assign(document.createElement('label'), {
+                for: 'high',
+                textContent: 'High',
+            })
+        );
+
+        form.append(
+            Object.assign(document.createElement('input'), {
+                type: 'text',
+                name: 'title',
+                placeholder: 'Title',
+                value: titleValue,
+            }),
+            Object.assign(document.createElement('input'), {
+                type: 'text',
+                name: 'details',
+                placeholder: 'Details',
+                value: detailsValue,
+            }),
+            Object.assign(document.createElement('input'), {
+                type: 'date',
+                name: 'date',
+                min: format(new Date(), 'yyyy-MM-dd'),
+                value: dateValue,
+            }),
+            radioDiv,
+            Object.assign(document.createElement('input'), {
+                type: 'submit',
+                value: submitValue,
+            }),
+            Object.assign(cancelBtn, {
+                textContent: 'Cancel',
+            })
+        );
+        console.log(type);
+        return { form, cancelBtn };
+    }
+
+    function editTask(event) {
+        const parentelement = event.target.parentElement;
+        const projectIndex = Number(event.target.getAttribute('project-index'));
+        const taskIndex = Number(event.target.getAttribute('data-index'));
+        const currentProject = document.querySelector(
+            `[data-project-index="${projectIndex}"]`
+        );
+        parentelement.style.borderLeft = '';
+        for (let i = 0; i <= 4; i++) {
+            parentelement.children[i].style.display = 'none';
+        }
+        const { form, cancelBtn } = renderForm(
+            'rename',
+            projectIndex,
+            taskIndex
+        );
+        parentelement.appendChild(form);
+        cancelBtn.addEventListener('click', () => {
+            currentProject.click();
+        });
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            project.editToDo(
+                projectIndex,
+                taskIndex,
+                e.target.title.value,
+                e.target.details.value,
+                e.target.date.value,
+                e.target.priority.value
             );
+            currentProject.click();
         });
     }
     return { project, renderProjectUI };
