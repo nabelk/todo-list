@@ -10,23 +10,38 @@ body {
     height: 100vh;
 }
 
+button,
+input {
+    cursor: pointer;
+}
+
 header {
     background-color: brown;
     text-align: center;
     padding: 20px;
 }
 
+button.add-task-btn,
+button.add-project {
+    font-size: 1rem;
+    align-self: flex-start;
+    padding: 10px;
+}
+
 main {
     display: grid;
-    grid-template-columns: 20vw calc(100vw - 20vw);
+    grid-template-columns: 23vw calc(100vw - 23vw);
+    width: 100vw;
 }
+
+/* Sidebar section */
 
 main div.sidebar {
     display: flex;
     flex-direction: column;
     gap: 20px;
     background-color: pink;
-    padding: 20px;
+    padding: 40px 30px;
 }
 
 main div.project-list {
@@ -43,12 +58,30 @@ main div.project-list > div {
     background-color: cadetblue;
 }
 
+main div.project-list > div > form {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    grid-auto-rows: auto;
+    gap: 10px;
+}
+
+div.project-list form > input:first-child {
+    padding: 8px;
+    grid-column: 1/3;
+}
+
+div.project-list form > *:nth-child(n + 2) {
+    padding: 6px;
+}
+
+/* Main content section */
+
 main div.content {
     display: flex;
     flex-direction: column;
     gap: 20px;
     background-color: aquamarine;
-    padding: 20px;
+    padding: 40px 60px;
 }
 
 main div.content > div.content-list {
@@ -59,14 +92,30 @@ main div.content > div.content-list {
 
 div.content-list > div {
     display: grid;
-    grid-template-columns: 5fr 2fr 1fr;
+    grid-template-columns: 1fr auto auto auto;
     grid-template-rows: auto auto;
-    gap: 20px;
-    padding: 12px 8px 12px 40px;
+    gap: 15px;
+    padding: 12px 40px 12px 40px;
     /* padding: 15px; */
     background-color: azure;
     position: relative;
+    width: 80%;
 }
+
+button.info-btn,
+button.delete-todo,
+button.edit-task-btn {
+    padding: 2px 5px;
+    border: none;
+    background-color: azure;
+    height: 100%;
+}
+
+div.content-list > div > div:last-child {
+    white-space: pre-line;
+}
+
+/* Styling of main content for checking complete task manipulate by script */
 
 .checked {
     text-decoration: line-through;
@@ -85,17 +134,41 @@ div.content-list > div {
     width: 7px;
 }
 
-div.content-list > div > div:last-child {
-    white-space: pre-line;
-}
+/* Add todo form of main content styling */
 
 div.form {
     background-color: azure;
     padding: 15px;
+    width: fit-content;
 }
 
-div.form form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+div.form form,
+div.content-list form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(5, auto);
+    row-gap: 20px;
+    column-gap: 5px;
+}
+
+div.form form > *:nth-child(-n + 3),
+div.content-list form > *:nth-child(-n + 3) {
+    width: 100%;
+    padding: 8px;
+}
+
+div.form form > *:nth-child(4),
+div.conent-list form > *:nth-child(4) {
+    padding: 5px;
+}
+
+div.form form > *:nth-child(-n + 4),
+div.content-list form > *:nth-child(-n + 4) {
+    grid-column: 1/3;
+}
+
+div.form form > *:nth-child(n + 5) div.content-list form > *:nth-child(n + 5) {
+    width: 70%;
+    padding: 10px;
+    justify-self: center;
 }
