@@ -3,21 +3,55 @@ import _, { assign } from 'lodash';
 import { format } from 'date-fns';
 import { el } from 'date-fns/locale';
 import Project from './project';
+import Storage from './localstorage';
+
+// Project tab UI
 
 export default function Screen() {
     const project = Project(); // Factory function from project.js
+    const storage = Storage();
     const { projectList } = project; // Project + tasklist array
-    const sidebar = document.querySelector('.project-list');
+    const projectSidebarH1 = document.querySelector(
+        '.sidebar > h1:nth-child(2)'
+    );
+    const sidebar = document.querySelector('.project-list'); // Div box for projects
     const content = document.querySelector('.content');
+
+    // Sidebar project button manipulation
+
+    projectSidebarH1.style.cursor = 'pointer';
+    function collapseProjectList() {
+        const projectBtn = document.querySelector('button.add-project');
+        const projectListDiv = document.querySelector('.project-list');
+        if (projectSidebarH1.className === 'collapse') {
+            [
+                projectBtn.style.display,
+                projectListDiv.style.display,
+                projectSidebarH1.className,
+            ] = ['', '', 'uncollapse'];
+        } else if (projectSidebarH1.className === 'uncollapse') {
+            [
+                projectBtn.style.display,
+                projectListDiv.style.display,
+                projectSidebarH1.className,
+            ] = ['none', 'none', 'collapse'];
+        }
+    }
+    projectSidebarH1.addEventListener('click', collapseProjectList);
+
+    // Check local storage if there's stored project
+
+    storage.checkLocalStorage(projectList);
 
     // Render project from projectList arr to the display
 
     function renderProjectUI() {
-        const sideBarBtn = document.querySelector('button.add-project');
+        const sideBarBtn = document.querySelector('button.add-project'); // Add project button
         sideBarBtn.disabled = false;
         sideBarBtn.addEventListener('click', addProject);
         sidebar.textContent = '';
         content.textContent = '';
+        if (projectList.length === 0) document.querySelector('.home').click();
 
         projectList.forEach((item, index) => {
             const div = document.createElement('div');
@@ -134,6 +168,7 @@ export default function Screen() {
                 false
             );
         }
+        storage.updateLocalStorage(projectList);
         console.table(
             projectList[Number(event.target.getAttribute('project-index'))]
                 .tasklist
@@ -155,6 +190,7 @@ export default function Screen() {
         project.delProject(
             Number(event.target.getAttribute('data-project-index'))
         );
+        storage.updateLocalStorage(projectList);
         renderProjectUI();
         if (projectList.length !== 0) {
             document
@@ -178,6 +214,7 @@ export default function Screen() {
             Number(projectIndex),
             event.target.getAttribute('data-index')
         );
+        storage.updateLocalStorage(projectList);
         renderProjectUI();
         document
             .querySelector(`[data-project-index="${projectIndex}"]`)
@@ -218,6 +255,7 @@ export default function Screen() {
         form.addEventListener('submit', (event) => {
             event.preventDefault();
             project.Addproject(event.target.project.value);
+            storage.updateLocalStorage(projectList);
             const newProjectIndex = projectList.findIndex(
                 (element) => element === projectList[projectList.length - 1]
             );
@@ -255,6 +293,7 @@ export default function Screen() {
                 event.target.priority.value,
                 false
             );
+            storage.updateLocalStorage(projectList);
             projectBtn.click();
             console.table('projects: ', projectList[projectIndex].name);
             console.table(projectList[projectIndex].tasklist);
@@ -380,8 +419,12 @@ export default function Screen() {
                 e.target.date.value,
                 e.target.priority.value
             );
+            storage.updateLocalStorage(projectList);
             currentProject.click();
         });
     }
+
+    renderProjectUI();
+
     return { project, renderProjectUI };
 }
