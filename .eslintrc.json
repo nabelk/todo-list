@@ -11,7 +11,16 @@
     "ignorePatterns": ["main.js"],
     "rules": {
         "no-console": "off",
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "no-param-reassign": "off",
+        "no-use-before-define": [
+            "error",
+            {
+                "functions": false
+            }
+        ],
+        "no-alert": "off",
+        "no-plusplus": "off"
     },
     "extends": ["airbnb-base", "prettier"]
 }
