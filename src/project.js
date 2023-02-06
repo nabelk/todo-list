@@ -6,9 +6,6 @@ export default function Project() {
         return { name, tasklist: [] };
     }
 
-    const getIndexProject = (name) =>
-        projectList.findIndex((list) => list.name === name);
-
     const delProject = (index) => {
         projectList.splice(index, 1);
     };
@@ -47,8 +44,8 @@ export default function Project() {
         console.table(taskObj);
     };
 
-    const checkedTask = (projectIndex, taskIndex, boolean) => {
-        projectList[projectIndex].tasklist[taskIndex].checked = boolean;
+    const checkedTask = (projectIndex, taskIndex, isCheck) => {
+        projectList[projectIndex].tasklist[taskIndex].checked = isCheck;
     };
 
     const delTodo = (index, taskIndex) => {
