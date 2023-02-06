@@ -22,7 +22,9 @@ header {
 }
 
 button.add-task-btn,
-button.add-project {
+button.add-project,
+button.add-task-home,
+button.add-note-btn {
     font-size: 1rem;
     align-self: flex-start;
     padding: 10px;
@@ -109,6 +111,17 @@ button.edit-task-btn {
     border: none;
     background-color: azure;
     height: 100%;
+}
+
+button.info-btn:hover,
+button.edit-task-btn:hover,
+button.delete-todo:hover {
+    background-color: grey;
+    border-radius: 5px;
+}
+
+button.delete-todo:hover {
+    color: maroon;
 }
 
 div.content-list > div > div:last-child {
