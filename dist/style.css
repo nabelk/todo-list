@@ -1,7 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto-Slab&display=swap');
+
+:root {
+    font-size: 16px;
+    --add-btn: #14cc60;
+    --cancel-btn: #ea3546;
+    --secondary-boxcolor: #cfdbd5;
+    --secondary-contentcolor: #c0d6df;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Roboto Slab', sans-serif;
 }
 
 body {
@@ -16,23 +27,26 @@ input {
 }
 
 header {
-    background-color: brown;
-    text-align: center;
-    padding: 20px;
+    background-color: #282f44;
+    color: #f2f7f2;
+    text-align: start;
+    padding: 20px 30px;
+    font-size: 1.8rem;
+    width: 100vw;
 }
 
 button.add-task-btn,
 button.add-project,
 button.add-task-home,
 button.add-note-btn {
-    font-size: 1rem;
+    font-size: 1.2rem;
     align-self: flex-start;
     padding: 10px;
 }
 
 main {
     display: grid;
-    grid-template-columns: 23vw calc(100vw - 23vw);
+    grid-template-columns: 25vw calc(100vw - 25vw);
     width: 100vw;
 }
 
@@ -42,8 +56,16 @@ main div.sidebar {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background-color: pink;
+    background-color: #e5e6e4;
     padding: 40px 30px;
+}
+
+div.sidebar h1 {
+    font-size: 1.5rem;
+}
+
+div.sidebar h1:hover {
+    color: grey;
 }
 
 main div.project-list {
@@ -54,15 +76,54 @@ main div.project-list {
 
 main div.project-list > div {
     padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    background-color: cadetblue;
+    display: grid;
+    grid-template-columns: 80% 1fr;
+    width: 100%;
+    gap: 10px;
+    background-color: var(--secondary-boxcolor);
+    border-radius: 5px;
+}
+
+main div.project-list > div.project-form {
+    grid-template-columns: auto;
+}
+
+div.project-form * {
+    font-size: 1.1rem;
+}
+
+button.project {
+    background-color: var(--secondary-boxcolor);
+    border: none;
+    text-align: start;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    word-wrap: break-word;
+}
+
+button.project:hover {
+    background-color: grey;
+    color: azure;
+}
+
+button.delete-project {
+    background-color: var(--secondary-boxcolor);
+    border: none;
+    padding: 10px 5px;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    align-self: start;
+}
+
+button.delete-project:hover {
+    background-color: grey;
+    color: var(--cancel-btn);
 }
 
 main div.project-list > div > form {
     display: grid;
-    grid-template-columns: repeat(2, 50%);
+    grid-template-columns: repeat(2, 1fr);
     grid-auto-rows: auto;
     gap: 10px;
 }
@@ -82,8 +143,16 @@ main div.content {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background-color: aquamarine;
+    background-color: #e5e6e4;
     padding: 40px 60px;
+}
+
+main div.content h1 {
+    font-size: 1.5rem;
+}
+
+main div.content * {
+    font-size: 1.2rem;
 }
 
 main div.content > div.content-list {
@@ -99,29 +168,40 @@ div.content-list > div {
     gap: 15px;
     padding: 12px 40px 12px 40px;
     /* padding: 15px; */
-    background-color: azure;
+    background-color: var(--secondary-contentcolor);
     position: relative;
     width: 80%;
+}
+
+div.content-list > div > div:first-child {
+    padding: 8px;
+    border-radius: 5px;
+}
+
+div.content-list > div > div:first-child:hover {
+    background-color: grey;
+    color: azure;
 }
 
 button.info-btn,
 button.delete-todo,
 button.edit-task-btn {
-    padding: 2px 5px;
+    padding: 8px;
     border: none;
-    background-color: azure;
+    background-color: var(--secondary-contentcolor);
     height: 100%;
+    border-radius: 5px;
 }
 
 button.info-btn:hover,
 button.edit-task-btn:hover,
 button.delete-todo:hover {
     background-color: grey;
-    border-radius: 5px;
+    color: azure;
 }
 
 button.delete-todo:hover {
-    color: maroon;
+    color: var(--cancel-btn);
 }
 
 div.content-list > div > div:last-child {
@@ -139,20 +219,22 @@ div.content-list > div > div:last-child {
     position: absolute;
     border-color: green;
     border-style: solid;
-    border-width: 0 2px 2px 0;
-    top: 10px;
+    border-width: 0 3px 3px 0;
+    top: 20px;
     left: 16px;
     transform: rotate(45deg);
-    height: 15px;
+    height: 16px;
     width: 7px;
 }
 
 /* Add todo form of main content styling */
 
-div.form {
-    background-color: azure;
+div.form,
+div.content-list > div.form {
+    background-color: var(--secondary-contentcolor);
     padding: 15px;
     width: fit-content;
+    padding: 12px 40px 12px 40px;
 }
 
 div.form form,
@@ -171,7 +253,7 @@ div.content-list form > *:nth-child(-n + 3) {
 }
 
 div.form form > *:nth-child(4),
-div.conent-list form > *:nth-child(4) {
+div.content-list form > *:nth-child(4) {
     padding: 5px;
 }
 
@@ -180,7 +262,8 @@ div.content-list form > *:nth-child(-n + 4) {
     grid-column: 1/3;
 }
 
-div.form form > *:nth-child(n + 5) div.content-list form > *:nth-child(n + 5) {
+div.form form > *:nth-child(n + 5),
+div.content-list form > *:nth-child(n + 5) {
     width: 70%;
     padding: 10px;
     justify-self: center;
