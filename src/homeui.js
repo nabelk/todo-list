@@ -1,14 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { format } from 'date-fns';
 import Home from './home';
+import Storage from './localstorage';
 
 export default function HomeTab() {
     const home = Home();
+    const storage = Storage();
     const { homeTask } = home;
     const content = document.querySelector('.content');
     const homeSideBarBtn = document.querySelector('.home');
     homeSideBarBtn.style.cursor = 'pointer';
     homeSideBarBtn.addEventListener('click', renderHomeContent);
+
+    storage.checkLocalStorage(homeTask, 'home');
 
     function renderHomeContent(event) {
         content.textContent = '';
@@ -85,7 +89,7 @@ export default function HomeTab() {
         const detailsValue =
             type === 'rename' ? homeTask[taskIndex].details : '';
         const dateValue = type === 'rename' ? homeTask[taskIndex].dueDate : '';
-        const submitValue = type === 'rename' ? 'Confirm Changes' : 'Add Task';
+        const submitValue = type === 'rename' ? 'Confirm' : 'Add Task';
         const form = document.createElement('form');
         const cancelBtn = document.createElement('button');
         const radioDiv = Object.assign(document.createElement('div'), {
@@ -152,9 +156,11 @@ export default function HomeTab() {
             Object.assign(document.createElement('input'), {
                 type: 'submit',
                 value: submitValue,
+                style: 'border-color: var(--add-btn); ',
             }),
             Object.assign(cancelBtn, {
                 textContent: 'Cancel',
+                style: 'border-color: var(--cancel-btn); ',
             })
         );
 
@@ -166,6 +172,9 @@ export default function HomeTab() {
     }
 
     function addTask(event) {
+        document
+            .querySelectorAll('button.edit-task-btn')
+            .forEach((btn) => (btn.disabled = true));
         event.target.disabled = true;
         const render = renderForm('Add Task');
         const { form } = render;
@@ -186,15 +195,21 @@ export default function HomeTab() {
                 e.target.priority.value,
                 false
             );
+            storage.updateLocalStorage(homeTask, 'home');
             homeSideBarBtn.click();
         });
     }
 
     function editTask(event) {
+        document
+            .querySelectorAll('button.edit-task-btn')
+            .forEach((btn) => (btn.disabled = true));
         const parentelement = event.target.parentElement;
         const taskIndex = Number(event.target.getAttribute('data-index'));
         const { form } = renderForm('rename', taskIndex);
+        parentelement.className = 'form';
         parentelement.style.borderLeft = '';
+        parentelement.parentElement.previousElementSibling.disabled = true; // Disabling add task button
         for (let i = 0; i <= 4; i++) {
             parentelement.children[i].style.display = 'none';
         }
@@ -208,12 +223,14 @@ export default function HomeTab() {
                 e.target.date.value,
                 e.target.priority.value
             );
+            storage.updateLocalStorage(homeTask, 'home');
             homeSideBarBtn.click();
         });
     }
 
     function delTask(event) {
         home.delTask(Number(event.target.getAttribute('data-index')));
+        storage.updateLocalStorage(homeTask, 'home');
         homeSideBarBtn.click();
     }
 
@@ -231,16 +248,17 @@ export default function HomeTab() {
                 false
             );
         }
+        storage.updateLocalStorage(homeTask, 'home');
     }
 
     function showDetails(event) {
         const detailsElement = event.target.parentElement.lastElementChild;
         if (detailsElement.style.display === 'none') {
             detailsElement.style.display = 'block';
-            event.target.style.color = 'green';
+            event.target.style.backgroundColor = 'grey';
         } else {
             detailsElement.style.display = 'none';
-            event.target.style.color = '';
+            event.target.style.backgroundColor = '';
         }
     }
 
