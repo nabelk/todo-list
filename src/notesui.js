@@ -1,16 +1,19 @@
 import Notes from './notes';
+import Storage from './localstorage';
 
 export default function NotesTab() {
     const note = Notes();
+    const storage = Storage();
     const { notesList } = note;
     const content = document.querySelector('.content');
     const notesSideBarBtn = document.querySelector('.notes');
     notesSideBarBtn.style.cursor = 'pointer';
     notesSideBarBtn.addEventListener('click', renderNotesContent);
 
+    storage.checkLocalStorage(notesList, 'notes');
+
     function renderNotesContent() {
         console.table(notesList);
-
         content.textContent = '';
         const addNoteBtn = document.createElement('button');
         const notesContent = document.createElement('div');
@@ -25,7 +28,7 @@ export default function NotesTab() {
             })
                 .appendChild(
                     Object.assign(div, {
-                        style: 'padding: 15px;display:flex; background-color:grey; flex-direction:column; gap:10px; border-radius:5px;',
+                        style: 'padding: 15px;display:flex; background-color:var(--secondary-contentcolor); flex-direction:column; gap:10px; border-radius:5px;',
                     })
                 )
                 .append(
@@ -33,18 +36,18 @@ export default function NotesTab() {
                         contentEditable: true,
                         value: item.title,
                         placeholder: 'Title',
-                        style: 'border:none; background-color:grey; padding: 5px',
+                        style: 'border:none;background-color:var(--secondary-contentcolor); padding: 5px',
                     }),
                     Object.assign(textAreaContent, {
                         contentEditable: true,
                         textContent: item.content,
                         placeholder: 'Content',
                         rows: '10',
-                        style: 'resize:none; border:none; background-color:grey; padding: 5px',
+                        style: 'resize:none; border:none; background-color:var(--secondary-contentcolor); padding: 5px',
                     }),
                     Object.assign(delBtn, {
                         textContent: 'Delete',
-                        style: 'align-self:flex-end',
+                        style: 'align-self:flex-end; padding:10px; border-color: var(--cancel-btn)',
                     })
                 );
             delBtn.addEventListener('click', delNote);
@@ -64,7 +67,8 @@ export default function NotesTab() {
     }
 
     function addNote() {
-        note.AddNote('Title', 'Content');
+        note.AddNote('', '');
+        storage.updateLocalStorage(notesList, 'notes');
         notesSideBarBtn.click();
     }
 
@@ -72,18 +76,21 @@ export default function NotesTab() {
         const getNoteIndex =
             event.target.parentElement.getAttribute('data-note-index');
         note.editTitle(getNoteIndex, event.target.value);
+        storage.updateLocalStorage(notesList, 'notes');
     }
 
     function editContent(event) {
         const getNoteIndex =
             event.target.parentElement.getAttribute('data-note-index');
         note.editContent(getNoteIndex, event.target.value);
+        storage.updateLocalStorage(notesList, 'notes');
     }
 
     function delNote(event) {
         const getNoteIndex =
             event.target.parentElement.getAttribute('data-note-index');
         note.delNote(getNoteIndex);
+        storage.updateLocalStorage(notesList, 'notes');
         notesSideBarBtn.click();
     }
 
