@@ -41,7 +41,7 @@ export default function Screen() {
 
     // Check local storage if there's stored project
 
-    storage.checkLocalStorage(projectList);
+    storage.checkLocalStorage(projectList, 'projects');
 
     // Render project from projectList arr to the display
 
@@ -69,6 +69,82 @@ export default function Screen() {
             div.append(button, deleteBtn);
             sidebar.appendChild(div);
         });
+    }
+
+    // Event handler for add project
+
+    function addProject(e) {
+        e.target.disabled = true;
+        const div = document.createElement('div');
+        const form = document.createElement('form');
+        const cancelBtn = document.createElement('button');
+        sidebar
+            .appendChild(
+                Object.assign(div, {
+                    className: 'project-form',
+                })
+            )
+            .appendChild(form)
+            .append(
+                Object.assign(document.createElement('input'), {
+                    type: 'text',
+                    name: 'project',
+                    placeholder: 'Project Name?',
+                    required: true,
+                }),
+                Object.assign(document.createElement('input'), {
+                    type: 'submit',
+                    value: 'Add Project',
+                    style: 'border-color: var(--add-btn);',
+                }),
+                Object.assign(cancelBtn, {
+                    textContent: 'Cancel',
+                    style: 'border-color: var(--cancel-btn);',
+                })
+            );
+
+        cancelBtn.addEventListener('click', () => {
+            div.remove();
+            e.target.disabled = false;
+            console.log(div.textContent);
+            console.table(projectList);
+        });
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            project.Addproject(event.target.project.value);
+            storage.updateLocalStorage(projectList);
+            const newProjectIndex = projectList.findIndex(
+                (element) => element === projectList[projectList.length - 1]
+            );
+            renderProjectUI();
+            console.table(projectList);
+            document
+                .querySelector(`[data-project-index="${newProjectIndex}"]`)
+                .click();
+        });
+    }
+
+    // Event handler for delete project
+
+    function delProjectEvent(event) {
+        project.delProject(
+            Number(event.target.getAttribute('data-project-index'))
+        );
+        storage.updateLocalStorage(projectList, 'projects');
+        renderProjectUI();
+        if (projectList.length !== 0) {
+            document
+                .querySelector(
+                    `[data-project-index="${projectList.findIndex(
+                        (element) =>
+                            element === projectList[projectList.length - 1]
+                    )}"]`
+                )
+                .click();
+        }
+
+        console.table(projectList);
     }
 
     // Event handler to render task list of the project when clicking "button" variable from renderProjctUI
@@ -152,153 +228,7 @@ export default function Screen() {
         button.addEventListener('click', addTodoProj);
     }
 
-    function checkedTask(event) {
-        if (event.target.className === 'not-check') {
-            event.target.className = 'checked';
-            project.checkedTask(
-                Number(event.target.getAttribute('project-index')),
-                Number(event.target.getAttribute('data-index')),
-                true
-            );
-        } else if (event.target.className === 'checked') {
-            event.target.className = 'not-check';
-            project.checkedTask(
-                Number(event.target.getAttribute('project-index')),
-                Number(event.target.getAttribute('data-index')),
-                false
-            );
-        }
-        storage.updateLocalStorage(projectList);
-        console.table(
-            projectList[Number(event.target.getAttribute('project-index'))]
-                .tasklist
-        );
-    }
-
-    function showDetails(event) {
-        const detailsElement = event.target.parentElement.lastElementChild;
-        if (detailsElement.style.display === 'none') {
-            detailsElement.style.display = 'block';
-            event.target.style.backgroundColor = 'green';
-        } else {
-            detailsElement.style.display = 'none';
-            event.target.style.backgroundColor = '';
-        }
-    }
-
-    function delProjectEvent(event) {
-        project.delProject(
-            Number(event.target.getAttribute('data-project-index'))
-        );
-        storage.updateLocalStorage(projectList);
-        renderProjectUI();
-        if (projectList.length !== 0) {
-            document
-                .querySelector(
-                    `[data-project-index="${projectList.findIndex(
-                        (element) =>
-                            element === projectList[projectList.length - 1]
-                    )}"]`
-                )
-                .click();
-        }
-
-        console.table(projectList);
-    }
-
-    function delToDoEvent(event) {
-        const projectIndex = document
-            .querySelector('.content h1')
-            .getAttribute('data-index');
-        project.delTodo(
-            Number(projectIndex),
-            event.target.getAttribute('data-index')
-        );
-        storage.updateLocalStorage(projectList);
-        renderProjectUI();
-        document
-            .querySelector(`[data-project-index="${projectIndex}"]`)
-            .click();
-        console.table(projectList[projectIndex].tasklist);
-    }
-
-    function addProject(e) {
-        e.target.disabled = true;
-        const div = document.createElement('div');
-        const form = document.createElement('form');
-        const cancelBtn = document.createElement('button');
-        sidebar
-            .appendChild(Object.assign(div))
-            .appendChild(form)
-            .append(
-                Object.assign(document.createElement('input'), {
-                    type: 'text',
-                    name: 'project',
-                    placeholder: 'Project Name?',
-                }),
-                Object.assign(document.createElement('input'), {
-                    type: 'submit',
-                    value: 'Add Project',
-                }),
-                Object.assign(cancelBtn, {
-                    textContent: 'Cancel',
-                })
-            );
-
-        cancelBtn.addEventListener('click', () => {
-            div.remove();
-            e.target.disabled = false;
-            console.log(div.textContent);
-            console.table(projectList);
-        });
-
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            project.Addproject(event.target.project.value);
-            storage.updateLocalStorage(projectList);
-            const newProjectIndex = projectList.findIndex(
-                (element) => element === projectList[projectList.length - 1]
-            );
-            renderProjectUI();
-            console.table(projectList);
-            document
-                .querySelector(`[data-project-index="${newProjectIndex}"]`)
-                .click();
-        });
-    }
-
-    function addTodoProj(e) {
-        e.target.disabled = true;
-        const projectIndex = document
-            .querySelector('.content h1')
-            .getAttribute('data-index');
-        const projectBtn = document.querySelector(
-            `[data-project-index="${projectIndex}"]`
-        );
-        const formDiv = document.querySelector('div.form');
-        const { form, cancelBtn } = renderForm('Add task');
-        formDiv.appendChild(form);
-        formDiv.style.display = '';
-        cancelBtn.addEventListener('click', () => {
-            projectBtn.click();
-        });
-
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            project.addTodo(
-                Number(projectIndex),
-                event.target.title.value,
-                event.target.details.value,
-                event.target.date.value,
-                event.target.priority.value,
-                false
-            );
-            storage.updateLocalStorage(projectList);
-            projectBtn.click();
-            console.table('projects: ', projectList[projectIndex].name);
-            console.table(projectList[projectIndex].tasklist);
-        });
-    }
+    // Render form for add & edit task
 
     function renderForm(type, projectIndex, taskIndex) {
         const titleValue =
@@ -313,7 +243,7 @@ export default function Screen() {
             type === 'rename'
                 ? projectList[projectIndex].tasklist[taskIndex].dueDate
                 : '';
-        const submitValue = type === 'rename' ? 'Confirm Changes' : 'Add Task';
+        const submitValue = type === 'rename' ? 'Confirm' : 'Add Task';
         const form = document.createElement('form');
         const cancelBtn = document.createElement('button');
         const radioDiv = Object.assign(document.createElement('div'), {
@@ -380,23 +310,70 @@ export default function Screen() {
             Object.assign(document.createElement('input'), {
                 type: 'submit',
                 value: submitValue,
+                style: 'border-color: var(--add-btn);',
             }),
             Object.assign(cancelBtn, {
                 textContent: 'Cancel',
+                style: 'border-color: var(--cancel-btn);',
             })
         );
         console.log(type);
         return { form, cancelBtn };
     }
 
+    // Event handler for add task into project
+
+    function addTodoProj(e) {
+        document
+            .querySelectorAll('button.edit-task-btn')
+            .forEach((btn) => (btn.disabled = true));
+        e.target.disabled = true;
+        const projectIndex = document
+            .querySelector('.content h1')
+            .getAttribute('data-index');
+        const projectBtn = document.querySelector(
+            `[data-project-index="${projectIndex}"]`
+        );
+        const formDiv = document.querySelector('div.form');
+        const { form, cancelBtn } = renderForm('Add task');
+        formDiv.appendChild(form);
+        formDiv.style.display = '';
+        cancelBtn.addEventListener('click', () => {
+            projectBtn.click();
+        });
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            project.addTodo(
+                Number(projectIndex),
+                event.target.title.value,
+                event.target.details.value,
+                event.target.date.value,
+                event.target.priority.value,
+                false
+            );
+            storage.updateLocalStorage(projectList, 'projects');
+            projectBtn.click();
+            console.table('projects: ', projectList[projectIndex].name);
+            console.table(projectList[projectIndex].tasklist);
+        });
+    }
+
+    // Event handler for edit task of the project
+
     function editTask(event) {
+        document
+            .querySelectorAll('button.edit-task-btn')
+            .forEach((btn) => (btn.disabled = true));
         const parentelement = event.target.parentElement;
         const projectIndex = Number(event.target.getAttribute('project-index'));
         const taskIndex = Number(event.target.getAttribute('data-index'));
         const currentProject = document.querySelector(
             `[data-project-index="${projectIndex}"]`
         );
+        parentelement.className = 'form';
         parentelement.style.borderLeft = '';
+        parentelement.parentElement.previousElementSibling.disabled = true; // Disabling add task button
         for (let i = 0; i <= 4; i++) {
             parentelement.children[i].style.display = 'none';
         }
@@ -419,9 +396,65 @@ export default function Screen() {
                 e.target.date.value,
                 e.target.priority.value
             );
-            storage.updateLocalStorage(projectList);
+            storage.updateLocalStorage(projectList, 'projects');
             currentProject.click();
         });
+    }
+
+    // Event handler for delete task of the project
+
+    function delToDoEvent(event) {
+        const projectIndex = document
+            .querySelector('.content h1')
+            .getAttribute('data-index');
+        project.delTodo(
+            Number(projectIndex),
+            event.target.getAttribute('data-index')
+        );
+        storage.updateLocalStorage(projectList, 'projects');
+        renderProjectUI();
+        document
+            .querySelector(`[data-project-index="${projectIndex}"]`)
+            .click();
+        console.table(projectList[projectIndex].tasklist);
+    }
+
+    // Event handler for check task
+
+    function checkedTask(event) {
+        if (event.target.className === 'not-check') {
+            event.target.className = 'checked';
+            project.checkedTask(
+                Number(event.target.getAttribute('project-index')),
+                Number(event.target.getAttribute('data-index')),
+                true
+            );
+        } else if (event.target.className === 'checked') {
+            event.target.className = 'not-check';
+            project.checkedTask(
+                Number(event.target.getAttribute('project-index')),
+                Number(event.target.getAttribute('data-index')),
+                false
+            );
+        }
+        storage.updateLocalStorage(projectList, 'projects');
+        console.table(
+            projectList[Number(event.target.getAttribute('project-index'))]
+                .tasklist
+        );
+    }
+
+    // Event handler for show details of task
+
+    function showDetails(event) {
+        const detailsElement = event.target.parentElement.lastElementChild;
+        if (detailsElement.style.display === 'none') {
+            detailsElement.style.display = 'block';
+            event.target.style.backgroundColor = 'grey';
+        } else {
+            detailsElement.style.display = 'none';
+            event.target.style.backgroundColor = '';
+        }
     }
 
     renderProjectUI();
