@@ -106,22 +106,20 @@ export default function Screen() {
         cancelBtn.addEventListener('click', () => {
             div.remove();
             e.target.disabled = false;
-            console.log(div.textContent);
-            console.table(projectList);
         });
 
         form.addEventListener('submit', (event) => {
             event.preventDefault();
             project.Addproject(event.target.project.value);
-            storage.updateLocalStorage(projectList);
+            storage.updateLocalStorage(projectList, 'projects');
             const newProjectIndex = projectList.findIndex(
                 (element) => element === projectList[projectList.length - 1]
             );
             renderProjectUI();
-            console.table(projectList);
             document
                 .querySelector(`[data-project-index="${newProjectIndex}"]`)
                 .click();
+            setCollapsed();
         });
     }
 
@@ -143,8 +141,7 @@ export default function Screen() {
                 )
                 .click();
         }
-
-        console.table(projectList);
+        setCollapsed();
     }
 
     // Event handler to render task list of the project when clicking "button" variable from renderProjctUI
@@ -317,7 +314,6 @@ export default function Screen() {
                 style: 'border-color: var(--cancel-btn);',
             })
         );
-        console.log(type);
         return { form, cancelBtn };
     }
 
@@ -354,8 +350,6 @@ export default function Screen() {
             );
             storage.updateLocalStorage(projectList, 'projects');
             projectBtn.click();
-            console.table('projects: ', projectList[projectIndex].name);
-            console.table(projectList[projectIndex].tasklist);
         });
     }
 
@@ -416,7 +410,6 @@ export default function Screen() {
         document
             .querySelector(`[data-project-index="${projectIndex}"]`)
             .click();
-        console.table(projectList[projectIndex].tasklist);
     }
 
     // Event handler for check task
@@ -438,10 +431,6 @@ export default function Screen() {
             );
         }
         storage.updateLocalStorage(projectList, 'projects');
-        console.table(
-            projectList[Number(event.target.getAttribute('project-index'))]
-                .tasklist
-        );
     }
 
     // Event handler for show details of task
@@ -457,7 +446,21 @@ export default function Screen() {
         }
     }
 
+    // Collapsed Sidebar for compact width
+
+    function setCollapsed() {
+        document
+            .querySelectorAll('div.sidebar button.project')
+            .forEach((btn) =>
+                btn.addEventListener(
+                    'click',
+                    () => (sidebar.parentElement.className = 'sidebar disable')
+                )
+            );
+    }
+
     renderProjectUI();
+    setCollapsed();
 
     return { project, renderProjectUI };
 }

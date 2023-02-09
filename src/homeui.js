@@ -15,6 +15,7 @@ export default function HomeTab() {
     storage.checkLocalStorage(homeTask, 'home');
 
     function renderHomeContent(event) {
+        homeSideBarBtn.parentElement.className = 'sidebar disable'; // Collapsed Sidebar for compact width
         content.textContent = '';
         const addTaskBtn = document.createElement('button');
         const contentList = document.createElement('div');
