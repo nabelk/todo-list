@@ -13,7 +13,7 @@ export default function NotesTab() {
     storage.checkLocalStorage(notesList, 'notes');
 
     function renderNotesContent() {
-        console.table(notesList);
+        notesSideBarBtn.parentElement.className = 'sidebar disable'; // Collapsed Sidebar for compact width
         content.textContent = '';
         const addNoteBtn = document.createElement('button');
         const notesContent = document.createElement('div');
@@ -24,7 +24,7 @@ export default function NotesTab() {
             const textAreaContent = document.createElement('textarea');
             div.setAttribute('data-note-index', index);
             Object.assign(notesContent, {
-                style: 'display:grid; grid-template-columns: repeat( auto-fill, minmax(300px, 1fr));gap: 20px',
+                style: 'display:grid; grid-template-columns: repeat( auto-fill, minmax(250px, 1fr));gap: 20px',
             })
                 .appendChild(
                     Object.assign(div, {
