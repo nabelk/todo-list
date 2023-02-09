@@ -5,10 +5,8 @@ export default function Storage() {
             JSON.parse(localStorage.getItem(storage)).forEach((item) => {
                 arr.push(item);
             });
-            console.table(localStorage.getItem(storage));
         } else {
             console.log('no local storage');
-            console.log(localStorage.getItem(storage));
         }
     };
 

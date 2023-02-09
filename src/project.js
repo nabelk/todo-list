@@ -36,12 +36,10 @@ export default function Project() {
         priority
     ) => {
         const taskObj = projectList[projectIndex].tasklist[taskIndex];
-        console.table(taskObj);
         taskObj.title = title;
         taskObj.details = details;
         taskObj.dueDate = dueDate;
         taskObj.priority = priority;
-        console.table(taskObj);
     };
 
     const checkedTask = (projectIndex, taskIndex, isCheck) => {
