@@ -19,6 +19,7 @@ body {
     display: grid;
     grid-template-rows: auto 1fr;
     height: 100vh;
+    width: 100vw;
 }
 
 button,
@@ -28,11 +29,20 @@ input {
 
 header {
     background-color: #282f44;
-    color: #f2f7f2;
-    text-align: start;
     padding: 20px 30px;
     font-size: 1.8rem;
     width: 100vw;
+    color: #f2f7f2;
+}
+
+header button {
+    display: none;
+    border-radius: 150px;
+}
+
+header button:focus,
+header button:hover {
+    background-color: grey;
 }
 
 button.add-task-btn,
@@ -167,7 +177,6 @@ div.content-list > div {
     grid-template-rows: auto auto;
     gap: 15px;
     padding: 12px 40px 12px 40px;
-    /* padding: 15px; */
     background-color: var(--secondary-contentcolor);
     position: relative;
     width: 80%;
@@ -206,6 +215,8 @@ button.delete-todo:hover {
 
 div.content-list > div > div:last-child {
     white-space: pre-line;
+    grid-column: 1/5;
+    word-break: break-all;
 }
 
 /* Styling of main content for checking complete task manipulate by script */
@@ -232,7 +243,6 @@ div.content-list > div > div:last-child {
 div.form,
 div.content-list > div.form {
     background-color: var(--secondary-contentcolor);
-    padding: 15px;
     width: fit-content;
     padding: 12px 40px 12px 40px;
 }
@@ -267,4 +277,141 @@ div.content-list form > *:nth-child(n + 5) {
     width: 70%;
     padding: 10px;
     justify-self: center;
+}
+
+/* Media query for tablet */
+
+@media only screen and (max-width: 1180px) {
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header button {
+        display: initial;
+        border: none;
+        background-color: #282f44;
+        color: #f2f7f2;
+        padding: 5px;
+        font-size: 1rem;
+    }
+
+    main {
+        grid-template-columns: 1fr;
+        position: relative;
+    }
+
+    main div.sidebar {
+        display: none;
+        position: absolute;
+        height: 100%;
+        top: 0;
+        right: -400px;
+        box-shadow: 5px 5px 10px grey;
+        position: absolute;
+        z-index: 11;
+        opacity: 0;
+        transition: all 0.25s;
+        -webkit-transition: all 0.25s;
+        width: 35vw;
+    }
+
+    main div.sidebar.enter {
+        opacity: 1;
+        right: 0;
+        display: flex;
+    }
+}
+
+@media only screen and (max-width: 915px) {
+    main div.sidebar {
+        width: 50vw;
+    }
+
+    div.content-list > div {
+        width: 100%;
+    }
+
+    div.content-list > div > div:first-child {
+        word-break: break-word;
+    }
+}
+
+@media only screen and (max-width: 624px) {
+    main div.sidebar {
+        width: 100vw;
+    }
+}
+
+/* Media query for mobile */
+
+@media only screen and (max-width: 550px) {
+    :root {
+        font-size: 14px;
+    }
+
+    main div.content {
+        padding: 40px 20px;
+    }
+
+    main div.content h1 {
+        word-break: break-all;
+    }
+
+    div.content-list > div {
+        grid-template-rows: repeat(3, auto);
+        grid-template-columns: repeat(3, auto);
+        gap: 10px;
+        width: 100%;
+    }
+
+    div.content-list > div > div:first-child {
+        grid-row: 1;
+        grid-column: 1/4;
+    }
+
+    button.delete-todo {
+        grid-column: 3;
+        grid-row: 2;
+    }
+
+    button.edit-task-btn {
+        grid-row: 2;
+        grid-column: 2;
+    }
+
+    button.info-btn {
+        grid-row: 2;
+        grid-column: 1;
+    }
+    div.content-list > div > div:last-child {
+        grid-row: 3;
+        grid-column: 1/4;
+    }
+
+    div.form,
+    div.content-list > div.form {
+        padding: 15px;
+        width: 100%;
+    }
+
+    div.input-radio {
+        align-items: center;
+    }
+
+    div.input-radio label {
+        font-size: 15px;
+    }
+
+    div.form form > *:nth-child(n + 5),
+    div.content-list form > *:nth-child(n + 5) {
+        width: 95%;
+    }
+}
+
+@media only screen and (max-width: 364px) {
+    div.input-radio label {
+        font-size: 10px;
+    }
 }
